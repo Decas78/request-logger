@@ -1,0 +1,7 @@
+service-python/__pycache__/
+service-python/*.pyc
+service-python/venv/
+service-python/.venv/
+RequestLogger.Api/bin/
+RequestLogger.Api/obj/
+.github/copilot-instructions.md
