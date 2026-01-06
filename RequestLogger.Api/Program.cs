@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.Marshalling;
 using Microsoft.VisualBasic;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
@@ -18,6 +19,8 @@ builder.Services.AddHttpClient();
 var app = builder.Build();
 
 app.Urls.Add("http://0.0.0.0:8080");
+
+
 
 // Middleware
 
@@ -88,13 +91,30 @@ app.Use(async (context, next) =>
     await next();
 });
 
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Endpoints
-app.MapGet("/health", () => Results.Ok(new { status = "healthyyeah" }));
+//Controllers
+
+
+
+// Test Endpoints
+app.MapGet("/", () => Results.Ok(new {message = "Request Logger API is running."}));
+app.MapPost("/testwrite", (PostTest input) =>
+{
+    // The input parameter is automatically deserialized from JSON
+    return Results.Ok(new { 
+        message = "Received POST with JSON data", 
+        receivedData = input,
+        validation = $"Title: {input.Title}, Content: {input.Content}, Id: {input.Id}"
+    });
+});
+
+
 
 app.Run();
