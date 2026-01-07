@@ -105,6 +105,7 @@ if (app.Environment.IsDevelopment())
 
 // Test Endpoints
 app.MapGet("/", () => Results.Ok(new {message = "Request Logger API is running."}));
+
 app.MapPost("/testwrite", (PostTest input) =>
 {
     // The input parameter is automatically deserialized from JSON
@@ -114,6 +115,45 @@ app.MapPost("/testwrite", (PostTest input) =>
         validation = $"Title: {input.Title}, Content: {input.Content}, Id: {input.Id}"
     });
 });
+
+app.MapPost("/testinvalid", (PostTestNR input) =>
+{
+    var errors = new List<string>();
+    if (string.IsNullOrEmpty(input.Title))
+    {
+        errors.Add("Title is required");
+    }
+    if (string.IsNullOrEmpty(input.Content))
+    {
+        errors.Add("Content is required");
+    }
+    if (input.Id <= 0)
+    {
+        errors.Add("Id is required and must be non-zero");
+    }
+    if (errors.Any())
+    {
+        return Results.BadRequest(new { errors });
+    }
+    return Results.Ok(new { 
+        message = "Received POST with JSON data", 
+        receivedData = input,
+        validation = $"Title: {input.Title}, Content: {input.Content}, Id: {input.Id}"
+    });
+});
+
+app.MapGet("/testreadslow", async () =>
+{
+    await Task.Delay(5000); // Simulate accessing a slow resource such as a database
+    var sampleData = new PostTest
+    {
+        Title = "Sample Title",
+        Content = "This is some sample content.",
+        Id = 1
+    };
+    return Results.Ok(sampleData);
+});
+
 
 
 
