@@ -9,6 +9,9 @@ class APILog(BaseModel):
     path: str
     queryString: str | None = None
     bodySizeBytes: int
+    latencyMs: int
+    responseStatusCode: int
+    clientIp: str | None = None
     timestamp: str | None = None
 
 @app.get("/process")

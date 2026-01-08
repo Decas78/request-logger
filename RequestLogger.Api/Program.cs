@@ -29,6 +29,8 @@ app.Use(async (context, next) =>
     // Log basic request info (always safe)
     Console.WriteLine($"Incoming Request: {context.Request.Method} {context.Request.Path}{context.Request.QueryString}");
 
+    var startTime = DateTime.UtcNow;
+
     string requestBody = string.Empty;
     long? originalPosition = null;
 
@@ -64,13 +66,23 @@ app.Use(async (context, next) =>
         }
     }
 
+    // Continue processing the actual request
+    await next();
+
+    // Calculate latency after request processing
+    var endTime = DateTime.UtcNow;
+    var latencyMs = (endTime - startTime).TotalMilliseconds;
+
     // Build log entry
     var logEntry = new
     {
         method = context.Request.Method,
         path = context.Request.Path.Value,
-        query = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : null,
+        queryString = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : null,
         bodySizeBytes = string.IsNullOrEmpty(requestBody) ? 0 : Encoding.UTF8.GetByteCount(requestBody),
+        latencyMs = (int)latencyMs,
+        responseStatusCode = context.Response.StatusCode,
+        clientIp = context.Connection.RemoteIpAddress?.ToString(),
         timestamp = DateTime.UtcNow.ToString("o")
     };
 
@@ -86,9 +98,6 @@ app.Use(async (context, next) =>
     {
         // Ignore failures in logging to avoid breaking main request
     }
-
-    // Continue processing the actual request
-    await next();
 });
 
 
