@@ -115,6 +115,8 @@ if (app.Environment.IsDevelopment())
 // Test Endpoints
 app.MapGet("/", () => Results.Ok(new {message = "Request Logger API is running."}));
 
+app.MapGet("/health", () => new { status = "healthyyeah" });
+
 app.MapPost("/testwrite", (PostTest input) =>
 {
     // The input parameter is automatically deserialized from JSON
@@ -167,3 +169,4 @@ app.MapGet("/testreadslow", async () =>
 
 
 app.Run();
+public partial class Program { }
