@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Linq;
 using Xunit;
 
 public class ApiTests : IClassFixture<WebApplicationFactory<Program>>
@@ -40,8 +41,13 @@ public class ApiTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task PostTestWriteEndpoint_ReturnsOkWithData()
     {
+        //Create large content
+        string originalString = "Hello";
+        int repeatCount = 50;
+        string Content = string.Concat(Enumerable.Repeat(originalString, repeatCount));
+
         // Arrange
-        var testData = new PostTest { Title = "Test Title", Content = "Test Content", Id = 123 };
+        var testData = new PostTest { Title = "Test Title", Content = Content, Id = 123 };
         var json = JsonSerializer.Serialize(testData);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 

@@ -5,3 +5,4 @@ service-python/.venv/
 RequestLogger.Api/bin/
 RequestLogger.Api/obj/
 .github/copilot-instructions.md
+.env
